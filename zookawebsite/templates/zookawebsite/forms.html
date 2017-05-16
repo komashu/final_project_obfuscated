@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}ZookaWebsite - Cut Ticket{% endblock title %}
+
+{% block main_body %}
+
+<h1>Zooka {{ header }}</h1>
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+{% if form.is_multipart %}
+    <form enctype="multipart/form-data" method="post" action="" class="post-form">
+{% else %}
+    <form method="post" action="" class="post-form">
+{% endif %}
+{% csrf_token %}
+<table>
+    {{ form.as_table }}
+  </table>
+    <button type="submit" class="save btn btn-default">Submit</button>
+
+</form>
+
+{% endblock main_body %}

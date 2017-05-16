@@ -1,0 +1,27 @@
+{% extends "zookawebsite/base.html" %}
+{% load staticfiles %}
+{% load obfuscated %}
+
+{% block title %}ZookaWebsite - QUnit Test Suite{% endblock title %}
+
+{% block main_body %}
+<!-- Elements to be used by QUnit for test reports. -->
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<!-- Set this so that the CSRF cookie is created. -->
+{% csrf_token %}
+{% endblock main_body %}
+
+{% unit_test_block qunit_report %}
+<!--
+QUnit report already setup.
+-->
+{% end_unit_test_block qunit_report %}
+{% unit_test_block extra_test_cases %}
+<!--
+Run tests from main test script.
+NOTE: This is loaded from here because the website specific JS libraries need
+to be loaded first.
+-->
+<script src="{% static "zookawebsite/site-tests.js" %}"></script>
+{% end_unit_test_block extra_test_cases %}

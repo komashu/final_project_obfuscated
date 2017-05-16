@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}ZookaWebsite - Home Page{% endblock title %}
+
+{% block main_body %}
+<h1> Tickets created by Zooka</h1>
+<table width="100%"  align="center" class="camptable table-striped table-bordered" id="table2">
+        <thead>
+        <tr>
+         <th scope="col">TT ID</th>
+         <th scope="col">Short description</th>
+         <th scope="col">Requester Login</th>
+         <th scope="col">Impact</th>
+         <th scope="col">Date Submitted</th>
+         <th scope="col">Disposition</th>
+        </tr>
+        </thead>
+<tbody>
+{% for item in tickets %}
+<tr>
+       <td><a href="https://obfuscated/{{ item.id }}" target="_blank">{{ item.id }}</a> </td>
+       <td> {{ item.short_description }} </td>
+       <td> {{ item.requester_login }} </td>
+       <td> {{ item.impact }}</td>
+       <td> {{ item.date_submitted| date:'SHORT_DATE_FORMAT'}}</td>
+       <td> {{ item.disposition }}</td>
+       </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock main_body %}

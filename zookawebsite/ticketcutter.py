@@ -141,7 +141,8 @@ def tt_update(w, campaign, username, **ticket_update):
                                                                   'correspondence': ticket_update['correspondence'],
                                                                   'cc_email': ticket_update['cc_email'],
                                                                   })
-    #Add a return for how many and what tickets were updated.
+    total_tickets = len(tickets)
+    return total_tickets, tickets
 
 
 def tag_search(w, tags):
@@ -222,12 +223,17 @@ def uploaded_csv(f, w, username, header, tag, _file):
     """
     header = [item.lower() for item in header]
     all_tickets = [dict(zip(header, map(str, row))) for row in _file]
+    created_tickets = []
+    ticket_count = len(all_tickets)
     for ticket in all_tickets:
-        id, disposition = tt_csv_cut(f, tag, **ticket)
+        _id, disposition = tt_csv_cut(f, tag, **ticket)
         if ticket['cc_email']:
             email = ticket['cc_email']
             add_cc(w, id, email )
         _, created = Tickets.objects.get_or_create(id=id, created_by=username, disposition=disposition, **ticket)
+        ticket.update({'ticket_id': _id})
+        created_tickets.append(ticket)
+    return ticket_count, created_tickets
 
 
 def get_eticket(w, id):

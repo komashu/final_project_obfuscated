@@ -19,7 +19,7 @@ from django.template import RequestContext
 from django.shortcuts import render, redirect, render_to_response
 from django.core.files.storage import FileSystemStorage
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views.generic import ListView
+from django.contrib import messages
 import csv
 from .forms import *
 from zookawebsite.decorators import get_user
@@ -122,6 +122,7 @@ def cutTT(request):
                 add_cc(w, id, cc_list)
             return redirect(reverse('tt_list'))
         else:
+            messages.warning(request, 'You did something bad and you should feel bad.')
             logger.debug('Form is not valid', username)
             return render(request, 'zookawebsite/forms.html', context)
     else:
@@ -170,8 +171,12 @@ def csvcuttt(request):
             campaign_id = campaign.id
             tag = str(Tags.objects.get(campaign_id=campaign_id))
             uploaded_csv(f, w, username, header, tag, _file)
+            ticket_count, created_tickets = uploaded_csv(f, w, username, header, tag, _file)
+            context.update({'ticket_count': ticket_count, 'created_tickets': created_tickets})
+            messages.add_message(request, messages.INFO, '{} tickets were created'.format(ticket_count))
             return redirect(reverse('tt_list'))
         else:
+            messages.warning(request, 'You did something bad and you should feel bad.')
             logger.debug('Data is not valid', username)
             return render(request, 'zookawebsite/forms.html', context)
     else:
@@ -217,10 +222,13 @@ def updateTT(request):
                 'cc_email': cc_email,
             }
             w = make_w_client(campaign, test)
-            tt_update(w, campaign, username, **ticket_update)
+            tt_count, tts_updated = tt_update(w, campaign, username, **ticket_update)
+            messages.add_message(request, messages.INFO, '{} tickets were updated'.format(tt_count))
+            context.update({'tts_updated': tts_updated, 'status': status, 'impact': impact, 'tags': tags,
+                            'correspondence': correspondence, 'cc_email': cc_email})
             return render_to_response('zookawebsite/zooka.html', context)
         else:
-            logger.debug(form.errors())
+            messages.warning(request, 'You did something bad and you should feel bad.')
             logger.debug('Form is not valid', username)
             return form.errors()
     else:

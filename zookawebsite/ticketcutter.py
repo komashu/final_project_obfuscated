@@ -86,7 +86,7 @@ def f_client(campaign, test):
     :return: a f client
     """
     tag, _user, _pass, w_endpoint, f_endpoint = get_prod_test_from_campaign(campaign, test)
-    f = F_client(user=_user, password=_pass, serverName=f_endpoint)
+    f = F_Client(user=_user, password=_pass, serverName=f_endpoint)
     return f
 
 
@@ -100,14 +100,14 @@ def tt_cut(f, username, tag, **ticket_input):
     of the tag.
     :return: id and disposition of the ticket. Plus it adds it to the database.
     """
-    id, disposition = f.createTicket(tags=tag, **ticket_input)
-    update_db = Tickets(id=id,
+    _id, disposition = f.createTicket(tags=tag, **ticket_input)
+    update_db = Tickets(id=_id,
                         disposition=disposition,
                         created_by=username,
                         tags=tag,
                         **ticket_input)
     update_db.save()
-    return id, disposition
+    return _id, disposition
 
 
 def tt_update(w, campaign, username, **ticket_update):
@@ -204,8 +204,8 @@ def tt_csv_cut(f, tag, **ticket_input):
     of the tag.
     :return: id and disposition of tickets created.
     """
-    id, disposition = f.createTicket(tags=tag, **ticket_input)
-    return id, disposition
+    _id, disposition = f.createTicket(tags=tag, **ticket_input)
+    return _id, disposition
 
 
 def uploaded_csv(f, w, username, header, tag, _file):

@@ -6,6 +6,32 @@
 {% block main_body %}
 <h1>{{ header }}</h1>
 
+<table width="100%"  align="center" class="camptable table-striped table-bordered" id="table2">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+         <th scope="col">Ticket ID</th>
+            <th scope="col">Status Updated</th>
+            <th scope="col">Impact Updated</th>
+            <th scope="col">Correspondence Updated</th>
+            <th scope="col">Tags Added</th>
+            <th scope="col">People CC'ed</th>
+        </tr>
+        </thead>
+<tbody>
+{% for item in tts_updated %}
+<tr>
+    <td>{{ forloop.counter }}</td>
+       <td><a href="https://obfuscated.com/{{ item }}" target="_blank">{{ item }}</a> </td>
+    <td>{{ status }} </td>
+    <td>{{ impact }} </td>
+    <td>{{ correspondence }} </td>
+    <td>{{ tags }} </td>
+    <td>{{ cc_email }} </td>
+       </tr>
+{% endfor %}
+</tbody>
+</table>
 
 
 {% endblock main_body %}

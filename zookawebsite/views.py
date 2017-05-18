@@ -21,6 +21,15 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 import csv
+
+### So, I was looking at the giant if statements in your code, and I think you can move just about everything 
+### out of the if statements. 
+### It is a little difficult to tell, because I don’t know what ‘reverse’ is doing or where it comes from. 
+### This is because you have a couple of import statements here where you import everything (*). 
+### I highly advise against doing this. I know it shows up in examples, 
+### but if you only import what you need, then you can see where everything comes from, and you are not importing
+### lots of extraneous stuff.
+
 from .forms import *
 from zookawebsite.decorators import get_user
 from .ticketcutter import *
@@ -158,11 +167,15 @@ def csvcuttt(request):
     if request.method == 'POST' and request.FILES['upload']:
         data = CSVTTCutterForm(request.POST, request.FILES)
         if data.is_valid():
+            ### I think this could all be in one function _file = _temp_save_file(request)
             uploaded_file = request.FILES['upload']
             fs = FileSystemStorage(location='/tmp/')
             savingfile = fs.save(uploaded_file.name, uploaded_file)
             csvfile= open('/tmp/' + savingfile, 'rt')
             _file = csv.reader(csvfile, dialect=csv.excel)
+            ### btw, where do you close and delete this file?
+            
+            ### this could also be one function _verify_data(_file)
             header = next(_file)
             campaign = data.cleaned_data['campaign']
             test = data.cleaned_data['test']
@@ -170,6 +183,7 @@ def csvcuttt(request):
             w = make_w_client(campaign, test)
             campaign_id = campaign.id
             tag = str(Tags.objects.get(campaign_id=campaign_id))
+            ### Same line twice?
             uploaded_csv(f, w, username, header, tag, _file)
             ticket_count, created_tickets = uploaded_csv(f, w, username, header, tag, _file)
             context.update({'ticket_count': ticket_count, 'created_tickets': created_tickets})
